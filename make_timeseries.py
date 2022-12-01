@@ -3,10 +3,11 @@ import numpy as np
 import datetime as dt
 from run_params import dx,dy,nx,ny
 
-runs = ['grad.1000','nograd.1000','grad.500','nograd.500']
+runs = ['grad.1000','nograd.1000',
+        'grad.500','nograd.500',
+        'grad.1000.absc','nograd.1000.absc']
 
 anaPath = f"/camp2e/gleung/aerograd-analysis/"
-
 
 def timeseries_features(run, pcp_thresh=0.1, hours=12):
     df = pd.read_hdf(f"{anaPath}{run}/tobac-out/w_features_track.h5",'table')
@@ -34,9 +35,19 @@ def timeseries_totalrain(run, hours=12):
     
     return(df)
 
+def timeseries_cloudcover(run, hours=12):
+    df = pd.read_pickle(f"{anaPath}{run}/mean_surf_flux/cloud_cover.pkl").reset_index()
+    df = df.groupby('time').cld_cover.mean()
+
+    df = df[df.index<12*hours +1]
+    
+    return(df)
+
 for run in runs:
     df = pd.DataFrame()
     df['RainingUpdrafts'] = timeseries_features(run)
+    df['AccRainingUpdrafts'] = df.RainingUpdrafts.cumsum()
     df['AccRain'] = timeseries_totalrain(run)
+    df['CloudCover'] = timeseries_cloudcover(run)
     
     df.to_pickle(f"{anaPath}{run}/timeseries.pkl")
