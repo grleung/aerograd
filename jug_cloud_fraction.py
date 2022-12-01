@@ -5,11 +5,11 @@ import h5py
 import xarray as xr
 from jug import TaskGenerator
 
-runs = ['grad.1000','nograd.1000','grad.500','nograd.500',
-        'grad.1000.norad','nograd.1000.norad','grad.500.norad','nograd.500.norad']
+runs = ['grad.1000.absc','nograd.1000.absc','grad.1000','nograd.1000','grad.500','nograd.500']
+
 @TaskGenerator
 def calc_cloud_cover(paths, savePath):
-    out = np.zeros((len(paths),118,998))
+    out = np.zeros((len(paths),998))
     for i, p in enumerate(paths):
         with h5py.File(p) as f:
             rtp = f['RTP'][1:119,1:999,1:999]
@@ -18,15 +18,16 @@ def calc_cloud_cover(paths, savePath):
             ovar = rtp - rv
             
             ovar = np.where(ovar>=1E-5, ovar, 0)
-            out[i,:,:] = np.count_nonzero(ovar, axis=2) #2 for mean over x, 1 for mean over y
-        
-    xr.DataArray(out, name='cld_cover', dims = ['time','z','y']).to_dataframe().to_pickle(f"{savePath}cloud_cover.pkl")
+            ovar = np.count_nonzero(ovar, axis=0)
+            out[i,:] = np.count_nonzero(ovar, axis=1)/(998)
+            
+    xr.DataArray(out, name='cld_cover', dims = ['time','y']).to_dataframe().to_pickle(f"{savePath}cloud_cover.pkl")
     
 for runName in runs:
     dataPath= f'/camp2e/gleung/aerograd/{runName}/'
     anaPath = f'/camp2e/gleung/aerograd-analysis/{runName}/'
 
-    dr = 'mean_cross_section'
+    dr = 'mean_surf_flux'
     if not os.path.isdir(f"{anaPath}{dr}"):
         os.mkdir(f"{anaPath}{dr}")
 
