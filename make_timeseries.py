@@ -36,7 +36,7 @@ def timeseries_totalrain(run, hours=12):
     return(df)
 
 def timeseries_cloudcover(run, hours=12):
-    df = pd.read_pickle(f"{anaPath}{run}/mean_surf_flux/cloud_cover.pkl").reset_index()
+    df = pd.read_pickle(f"{anaPath}{run}/mean_surf_flux/cld_cover.pkl").reset_index()
     df = df.groupby('time').cld_cover.mean()
 
     df = df[df.index<12*hours +1]

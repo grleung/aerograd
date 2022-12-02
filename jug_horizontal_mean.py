@@ -5,12 +5,7 @@ import h5py
 import xarray as xr
 from jug import TaskGenerator
 
-variables = ['RV',#'RCP','RSP','RPP',
-	'THETA','WC','UC','VC','CCCMP',
-             'TCON',
-             'FTHRD','LWDN','LWUP','SWDN','SWUP']
-
-runName = 'grad.1000.nomic'#emit.sulf.land.grad'
+runName = 'grad.absc.mid'
 dataPath= f'/camp2e/gleung/aerograd/{runName}/'
 anaPath = f'/camp2e/gleung/aerograd-analysis/{runName}/'
 
@@ -20,11 +15,19 @@ if not os.path.isdir(f"{anaPath}{dr}"):
 
 paths = [f"{dataPath}{p}" for p in sorted(os.listdir(dataPath)) if (p.startswith('a-L') and p.endswith('.h5'))]
 print(paths)
+ccnname = 'BRC1MP'
+#ccnname = 'CCCMP'
+variables = ['RV','RCP','RSP','RPP',
+	'THETA','WC','UC','VC',ccnname,
+             'TCON',
+             'FTHRD','LWDN','LWUP','SWDN','SWUP']
+
 
 @TaskGenerator
 def take_mean_cross_section(v, paths, savePath):
     out = np.zeros((len(paths),118,998))
     for i, p in enumerate(paths):
+        print(p)
         with h5py.File(p) as f:
             if v == 'TCON':
                 rtp = f['RTP'][1:119,1:999,1:999]

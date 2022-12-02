@@ -5,12 +5,11 @@ import h5py
 import xarray as xr
 from jug import TaskGenerator
 
-variables = [#'ACCPR',
+variables = ['ACCPR',
             'SFLUX_T','SFLUX_R',#'PCPRR',#'RSHORT','RLONG','RLONGUP',
            'AODT']
-#runName = 'grad.big-open'
-runName = 'grad.1000.nomic'
-#paths (change for this machine)
+
+runName = 'grad.absc.mid'
 dataPath= f'/camp2e/gleung/aerograd/{runName}/'
 anaPath = f'/camp2e/gleung/aerograd-analysis/{runName}/'
 

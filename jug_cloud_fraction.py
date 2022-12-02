@@ -21,7 +21,7 @@ def calc_cloud_cover(paths, savePath):
             ovar = np.count_nonzero(ovar, axis=0)
             out[i,:] = np.count_nonzero(ovar, axis=1)/(998)
             
-    xr.DataArray(out, name='cld_cover', dims = ['time','y']).to_dataframe().to_pickle(f"{savePath}cloud_cover.pkl")
+    xr.DataArray(out, name='cld_cover', dims = ['time','y']).to_dataframe().to_pickle(f"{savePath}cld_cover.pkl")
     
 for runName in runs:
     dataPath= f'/camp2e/gleung/aerograd/{runName}/'
